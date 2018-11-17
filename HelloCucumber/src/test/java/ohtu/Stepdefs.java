@@ -33,7 +33,6 @@ public class Stepdefs {
     @When("^it is reset$")
     public void it_is_reset() throws Throwable {
         counter.reset();
-        throw new PendingException();
     }
 
 }

@@ -3,6 +3,8 @@ package ohtu;
 import com.google.gson.Gson;
 import java.io.IOException;
 import org.apache.http.client.fluent.Request;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Main {
 
@@ -24,6 +26,7 @@ public class Main {
 
             int totalDoneExercises = 0;
             int totalHours = 0;
+            int totalSubmissions = 0;
 
             for (Submission sub : subs) {
                 if (sub.getCourse().equals(course.getName())) {
@@ -36,10 +39,28 @@ public class Main {
 
                 }
             }
-            
+
             System.out.println("yhteensä: " + totalDoneExercises + "/" + sumOfExercises(course) + " tunteja " + totalHours);
             System.out.println("");
-            
+            totalDoneExercises = 0;
+            totalHours = 0;
+
+            String courseUrl = "https://studies.cs.helsinki.fi/courses/" + course.getName() + "/stats";
+            String bodyText = Request.Get(courseUrl).execute().returnContent().asString();
+
+            JsonParser parser = new JsonParser();
+            JsonObject parsittuData = parser.parse(bodyText).getAsJsonObject();
+
+            for (String key : parsittuData.keySet()) {
+                totalSubmissions += parsittuData.get(key).getAsJsonObject().get("students").getAsInt();
+                totalDoneExercises += parsittuData.get(key).getAsJsonObject().get("exercise_total").getAsInt();
+                totalHours += parsittuData.get(key).getAsJsonObject().get("hour_total").getAsInt();
+            }
+
+            System.out.println("kurssilla yhteensä " + totalSubmissions
+                    + " palautusta, palautettuja tehtäviä " + totalDoneExercises
+                    + " kpl, aikaa käytetty yhteensä " + totalHours
+                    + " tuntia.");
         }
     }
 

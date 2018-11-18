@@ -42,6 +42,7 @@ public class Main {
 
             System.out.println("yhteensä: " + totalDoneExercises + "/" + sumOfExercises(course) + " tunteja " + totalHours);
             System.out.println("");
+            
             totalDoneExercises = 0;
             totalHours = 0;
 
